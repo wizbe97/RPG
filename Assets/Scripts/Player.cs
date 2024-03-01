@@ -11,9 +11,35 @@ public class Player : Character
     public HealthBar healthBarPrefab;
     HealthBar healthBar;
 
+    private int selectedSlot;
+
     private void OnEnable()
     {
         ResetCharacter();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SelectSlot(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SelectSlot(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SelectSlot(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            SelectSlot(3);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            SelectSlot(4);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -87,6 +113,14 @@ public class Player : Character
         Destroy(inventory.gameObject);
     }
 
+     private void SelectSlot(int slotIndex)
+    {
+        if (inventory != null)
+        {
+            inventory.SelectSlot(slotIndex);
+        }
+    }
+
     public override void ResetCharacter()
     {
         inventory = Instantiate(inventoryPrefab);
@@ -94,5 +128,8 @@ public class Player : Character
         healthBar.character = this;
 
         hitPoints.value = startingHitPoints;
+
+        // Select the first slot by default
+        SelectSlot(0);
     }
 }

@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   qtyText: {fileID: 1643035278484150665}
+  highlightImage: {fileID: 7071111420857712856}
 --- !u!1 &5083217649008842663
 GameObject:
   m_ObjectHideFlags: 0

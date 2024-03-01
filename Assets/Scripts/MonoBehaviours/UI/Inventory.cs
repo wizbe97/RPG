@@ -6,6 +6,8 @@ public class Inventory : MonoBehaviour
     public GameObject slotPrefab;
 
     public const int numSlots = 5;
+    private int selectedSlotIndex = -1;
+
 
     Image[] itemImages = new Image[numSlots];
     Item[] items = new Item[numSlots];
@@ -27,6 +29,29 @@ public class Inventory : MonoBehaviour
                 newSlot.transform.SetParent(gameObject.transform.GetChild(0).transform);
                 slots[i] = newSlot;
                 itemImages[i] = newSlot.transform.GetChild(1).GetComponent<Image>();
+            }
+        }
+    }
+
+    public void SelectSlot(int slotIndex)
+    {
+        if (slotIndex >= 0 && slotIndex < numSlots)
+        {
+            if (selectedSlotIndex != -1)
+            {
+                slots[selectedSlotIndex].GetComponent<Slot>().HighlightSlot(false);
+            }
+
+            selectedSlotIndex = slotIndex;
+            slots[selectedSlotIndex].GetComponent<Slot>().HighlightSlot(true);
+
+            if (items[selectedSlotIndex] != null)
+            {
+                Debug.Log("Selected item: " + items[selectedSlotIndex].objectName);
+            }
+            else
+            {
+                Debug.Log("No item selected");
             }
         }
     }
