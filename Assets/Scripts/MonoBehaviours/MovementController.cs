@@ -18,11 +18,6 @@ public class MovementController : MonoBehaviour
         animationState = GetComponent<UpdateAnimationState>();
     }
 
-    void Update()
-    {
-
-    }
-
     void FixedUpdate()
     {
         if (!animationState.stateLock)

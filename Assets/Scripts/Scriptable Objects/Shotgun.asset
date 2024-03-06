@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a6db8b461ed0f14386e23feb3bac7e6, type: 3}
-  m_Name: Heart
+  m_Name: Shotgun
   m_EditorClassIdentifier: 
-  objectName: heart
-  image: {fileID: -443841175, guid: 83dfc663a4585984fa5e603087fcc470, type: 3}
-  quantity: 5
+  objectName: shotgun
+  image: {fileID: 21300000, guid: 17af42cfd2b37a749a1ac7c70aac5869, type: 3}
+  quantity: 1
   stackable: 0
-  itemType: 1
+  itemType: 2

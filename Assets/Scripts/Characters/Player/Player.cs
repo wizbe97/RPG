@@ -3,15 +3,13 @@ using UnityEngine;
 
 public class Player : Character
 {
-    public Inventory inventoryPrefab;
-    Inventory inventory;
+    public InventoryManager inventoryManager;
 
     public HitPoints hitPoints;
 
     public HealthBar healthBarPrefab;
     HealthBar healthBar;
-
-    private void OnEnable()
+    private void Start()
     {
         ResetCharacter();
     }
@@ -29,10 +27,16 @@ public class Player : Character
                 switch (hitObject.itemType)
                 {
                     case Item.ItemType.COIN:
-                        shouldDisappear = inventory.AddItem(hitObject);
+                        Debug.Log("Coin picked up!");
+                        shouldDisappear = inventoryManager.AddItem(hitObject);
                         break;
                     case Item.ItemType.HEALTH:
                         shouldDisappear = AdjustHitPoints(hitObject.quantity);
+                        Debug.Log("Health picked up!");
+                        break;
+                    case Item.ItemType.GUN:
+                        Debug.Log("Gun picked up!");
+                        shouldDisappear = inventoryManager.AddItem(hitObject);
                         break;
                     default:
                         break;
@@ -45,6 +49,8 @@ public class Player : Character
             }
         }
     }
+
+
 
     public bool AdjustHitPoints(int amount)
     {
@@ -84,12 +90,10 @@ public class Player : Character
     {
         base.KillCharacter();
         Destroy(healthBar.gameObject);
-        Destroy(inventory.gameObject);
     }
 
     public override void ResetCharacter()
     {
-        inventory = Instantiate(inventoryPrefab);
         healthBar = Instantiate(healthBarPrefab);
         healthBar.character = this;
 
