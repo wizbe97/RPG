@@ -37,21 +37,16 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         countText.gameObject.SetActive(textActive);
     }
 
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (!isDragging && (Mouse.current.leftButton.isPressed || (Mouse.current.leftButton.isPressed && Mouse.current.rightButton.isPressed)))
         {
             isDragging = true; // Start dragging if left button is pressed or both buttons are pressed
             image.raycastTarget = false;
-
-            // Move the inventory slot to the last sibling of its parent
-            Transform parentTransform = transform.parent;
-            if (parentTransform != null)
-            {
-                parentTransform.SetAsLastSibling();
-            }
-
+            // Parenting logic adjusted here
+            parentAfterDrag = transform.parent; // Store the current parent
+            // No need to change the parent here, leave it as it is
+            // transform.SetParent(transform.root);
             countText.raycastTarget = false;
         }
     }
@@ -61,18 +56,14 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (isDragging)
         {
             transform.position = Mouse.current.position.ReadValue();
-            transform.SetAsLastSibling(); // Bring the dragged item to the front within its parent
         }
     }
-
 
     public void OnEndDrag(PointerEventData Data)
     {
         if (isDragging)
         {
             isDragging = false;
-            gameObject.layer = LayerMask.NameToLayer("UI");
-
             image.raycastTarget = true;
             InventoryItem targetItem = Data.pointerEnter ? Data.pointerEnter.GetComponent<InventoryItem>() : null;
             InventorySlot targetSlot = Data.pointerEnter ? Data.pointerEnter.GetComponent<InventorySlot>() : null;

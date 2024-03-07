@@ -33,9 +33,4 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             inventoryItem.transform.SetParent(transform); // Set the parent of the dragged item to this slot
         }
     }
-
-    public void UpdateVisualIndication()
-    {
-        image.color = selectedColor;
-    }
 }
