@@ -13,6 +13,8 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public Item item;
     [HideInInspector] public int count = 1;
     [HideInInspector] public Transform parentAfterDrag;
+    private GameObject placeholder; // Placeholder object for maintaining slot state while dragging
+
 
     bool isDragging = false; // Track if dragging is occurring
     private InventoryManager inventoryManager;
@@ -43,10 +45,18 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             isDragging = true; // Start dragging if left button is pressed or both buttons are pressed
             image.raycastTarget = false;
-            // Parenting logic adjusted here
-            parentAfterDrag = transform.parent; // Store the current parent
-            // No need to change the parent here, leave it as it is
-            // transform.SetParent(transform.root);
+            parentAfterDrag = transform.parent;
+
+            // Create a placeholder object
+            placeholder = new GameObject("Placeholder");
+            placeholder.transform.SetParent(transform.parent);
+            RectTransform placeholderRect = placeholder.AddComponent<RectTransform>();
+            placeholderRect.sizeDelta = transform.GetComponent<RectTransform>().sizeDelta;
+
+            // Set the position of the placeholder to match the dragged item
+            placeholder.transform.SetSiblingIndex(transform.GetSiblingIndex());
+
+            transform.SetParent(transform.root);
             countText.raycastTarget = false;
         }
     }
@@ -59,51 +69,33 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
-    public void OnEndDrag(PointerEventData Data)
+    public void OnEndDrag(PointerEventData eventData)
     {
         if (isDragging)
         {
             isDragging = false;
             image.raycastTarget = true;
-            InventoryItem targetItem = Data.pointerEnter ? Data.pointerEnter.GetComponent<InventoryItem>() : null;
-            InventorySlot targetSlot = Data.pointerEnter ? Data.pointerEnter.GetComponent<InventorySlot>() : null;
+            InventoryItem targetItem = eventData.pointerEnter ? eventData.pointerEnter.GetComponent<InventoryItem>() : null;
 
             if (targetItem != null && item == targetItem.item && item.stackable)
             {
-                if (targetSlot != null)
-                {
-                    // Snap the dragged item onto the target item slot
-                    transform.SetParent(targetItem.transform.parent);
-                    transform.position = targetItem.transform.position;
-                    transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
+                // Snap the dragged item onto the target item slot
+                transform.SetParent(targetItem.transform.parent);
+                transform.position = targetItem.transform.position;
+                transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
 
-                    // Merge the dragged item with the target item
-                    targetItem.MergeWith(this);
-                }
-                else
-                {
-                    // Put the dragged item back to its original slot
-                    transform.SetParent(parentAfterDrag);
-                    transform.localPosition = Vector3.zero;
-                }
+                // Merge the dragged item with the target item
+                targetItem.MergeWith(this);
             }
             else
             {
-                if (targetSlot != null)
-                {
-                    // Put the dragged item into the target inventory slot
-                    transform.SetParent(targetSlot.transform);
-                    transform.localPosition = Vector3.zero;
-                }
-                else
-                {
-                    // Put the dragged item back to its original slot
-                    transform.SetParent(parentAfterDrag);
-                    transform.localPosition = Vector3.zero;
-                }
+                transform.SetParent(parentAfterDrag);
             }
 
             countText.raycastTarget = true;
+
+            // Destroy the placeholder object
+            Destroy(placeholder);
         }
     }
 
@@ -128,4 +120,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             RefreshCount();
         }
     }
+
+
 }

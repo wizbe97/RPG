@@ -27,10 +27,17 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     {
         if (transform.childCount == 0)
         {
+            // Get the dragged item
             InventoryItem inventoryItem = eventData.pointerDrag.GetComponent<InventoryItem>();
-            // Parenting logic adjusted here
-            inventoryItem.parentAfterDrag = transform; // Set the parent after drag to this slot
-            inventoryItem.transform.SetParent(transform); // Set the parent of the dragged item to this slot
+
+            // Check if the slot already contains an item
+            if (inventoryItem.parentAfterDrag != transform)
+            {
+                // If the slot is empty or does not contain the dragged item, proceed with dropping the item into the slot
+                inventoryItem.parentAfterDrag = transform; // Set the parent after drag to this slot
+                inventoryItem.transform.SetParent(transform); // Set the parent of the dragged item to this slot
+            }
         }
     }
+
 }
