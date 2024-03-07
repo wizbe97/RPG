@@ -28,7 +28,14 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         if (transform.childCount == 0)
         {
             InventoryItem inventoryItem = eventData.pointerDrag.GetComponent<InventoryItem>();
-            inventoryItem.parentAfterDrag = transform;
+            // Parenting logic adjusted here
+            inventoryItem.parentAfterDrag = transform; // Set the parent after drag to this slot
+            inventoryItem.transform.SetParent(transform); // Set the parent of the dragged item to this slot
         }
+    }
+
+    public void UpdateVisualIndication()
+    {
+        image.color = selectedColor;
     }
 }

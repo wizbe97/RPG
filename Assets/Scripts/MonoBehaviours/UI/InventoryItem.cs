@@ -37,14 +37,21 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         countText.gameObject.SetActive(textActive);
     }
 
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (!isDragging && (Mouse.current.leftButton.isPressed || (Mouse.current.leftButton.isPressed && Mouse.current.rightButton.isPressed)))
         {
             isDragging = true; // Start dragging if left button is pressed or both buttons are pressed
             image.raycastTarget = false;
-            parentAfterDrag = transform.parent;
-            transform.SetParent(transform.root);
+
+            // Move the inventory slot to the last sibling of its parent
+            Transform parentTransform = transform.parent;
+            if (parentTransform != null)
+            {
+                parentTransform.SetAsLastSibling();
+            }
+
             countText.raycastTarget = false;
         }
     }
@@ -54,30 +61,55 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (isDragging)
         {
             transform.position = Mouse.current.position.ReadValue();
+            transform.SetAsLastSibling(); // Bring the dragged item to the front within its parent
         }
     }
+
 
     public void OnEndDrag(PointerEventData Data)
     {
         if (isDragging)
         {
             isDragging = false;
+            gameObject.layer = LayerMask.NameToLayer("UI");
+
             image.raycastTarget = true;
             InventoryItem targetItem = Data.pointerEnter ? Data.pointerEnter.GetComponent<InventoryItem>() : null;
+            InventorySlot targetSlot = Data.pointerEnter ? Data.pointerEnter.GetComponent<InventorySlot>() : null;
 
             if (targetItem != null && item == targetItem.item && item.stackable)
             {
-                // Snap the dragged item onto the target item slot
-                transform.SetParent(targetItem.transform.parent);
-                transform.position = targetItem.transform.position;
-                transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
+                if (targetSlot != null)
+                {
+                    // Snap the dragged item onto the target item slot
+                    transform.SetParent(targetItem.transform.parent);
+                    transform.position = targetItem.transform.position;
+                    transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
 
-                // Merge the dragged item with the target item
-                targetItem.MergeWith(this);
+                    // Merge the dragged item with the target item
+                    targetItem.MergeWith(this);
+                }
+                else
+                {
+                    // Put the dragged item back to its original slot
+                    transform.SetParent(parentAfterDrag);
+                    transform.localPosition = Vector3.zero;
+                }
             }
             else
             {
-                transform.SetParent(parentAfterDrag);
+                if (targetSlot != null)
+                {
+                    // Put the dragged item into the target inventory slot
+                    transform.SetParent(targetSlot.transform);
+                    transform.localPosition = Vector3.zero;
+                }
+                else
+                {
+                    // Put the dragged item back to its original slot
+                    transform.SetParent(parentAfterDrag);
+                    transform.localPosition = Vector3.zero;
+                }
             }
 
             countText.raycastTarget = true;
@@ -105,6 +137,4 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             RefreshCount();
         }
     }
-
-
 }
