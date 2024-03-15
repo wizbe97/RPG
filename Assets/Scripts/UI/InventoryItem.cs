@@ -82,7 +82,10 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 targetObject = targetObject.transform.parent.gameObject;
 
             InventoryItem targetItem = targetObject ? targetObject.GetComponent<InventoryItem>() : null;
-            
+
+            //This is a fix for when eventData.pointerEnter points to a slot rather than an item
+            if(targetItem == null)
+                targetItem = targetObject?.GetComponent<InventorySlot>()?.Item;
 
             if (targetItem != null)
             {
