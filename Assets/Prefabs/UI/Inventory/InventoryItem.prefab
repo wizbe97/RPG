@@ -94,6 +94,7 @@ MonoBehaviour:
   item: {fileID: 0}
   count: 1
   parentAfterDrag: {fileID: 0}
+  inventorySlotIndex: 0
 --- !u!1 &4729162581181025770
 GameObject:
   m_ObjectHideFlags: 0

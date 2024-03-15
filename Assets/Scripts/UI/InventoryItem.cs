@@ -19,6 +19,8 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     bool isDragging = false; // Track if dragging is occurring
     private InventoryManager inventoryManager;
 
+    public int inventorySlotIndex;
+
     private void Start()
     {
         inventoryManager = FindObjectOfType<InventoryManager>(); // Find the InventoryManager in the scene
@@ -73,21 +75,39 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             isDragging = false;
             image.raycastTarget = true;
-            InventoryItem targetItem = eventData.pointerEnter ? eventData.pointerEnter.GetComponent<InventoryItem>() : null;
 
-            if (targetItem != null && item == targetItem.item && item.stackable)
+            //This is an ugly fix for when eventData.pointerEnter is pointing to the textbox on top of the inventory item
+            GameObject targetObject = eventData.pointerEnter;
+            if (targetObject != null && targetObject.GetComponent<Text>() != null)
+                targetObject = targetObject.transform.parent.gameObject;
+
+            InventoryItem targetItem = targetObject ? targetObject.GetComponent<InventoryItem>() : null;
+            
+
+            if (targetItem != null)
             {
-                // Snap the dragged item onto the target item slot
-                transform.SetParent(targetItem.transform.parent);
-                transform.position = targetItem.transform.position;
-                transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
+                if (item == targetItem.item && item.stackable)
+                {
+                    // Snap the dragged item onto the target item slot
+                    transform.SetParent(targetItem.transform.parent);
+                    transform.position = targetItem.transform.position;
+                    transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
 
-                // Merge the dragged item with the target item
-                targetItem.MergeWith(this);
+                    // Merge the dragged item with the target item
+                    targetItem.MergeWith(this);
+                }
+                else
+                {
+                    InventoryManager.Instance.SwitchItemSlots(this, targetItem);
+                }
             }
             else
             {
-                transform.SetParent(parentAfterDrag);
+                //transform.SetParent(parentAfterDrag);
+
+                InventorySlot targetSlot = targetObject.GetComponent<InventorySlot>();
+                if (targetSlot != null)
+                    InventoryManager.Instance.ChangeItemSlot(this, targetSlot.Index);
             }
 
             countText.raycastTarget = true;

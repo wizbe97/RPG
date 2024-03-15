@@ -45,7 +45,8 @@ public class Player : Character
 
                 if (shouldDisappear)
                 {
-                    collision.gameObject.SetActive(false);
+                    //collision.gameObject.SetActive(false);
+                    Destroy(collision.gameObject);
                 }
             }
         }
