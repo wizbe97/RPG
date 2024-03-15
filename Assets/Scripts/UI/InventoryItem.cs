@@ -19,7 +19,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     bool isDragging = false; // Track if dragging is occurring
     private InventoryManager inventoryManager;
 
-    public int inventorySlotIndex;
+    public int InventorySlotIndex;
 
     private void Start()
     {
@@ -103,16 +103,10 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             }
             else
             {
-                if (targetObject == null)
-                    transform.SetParent(parentAfterDrag);
-                else
-                {
-                    InventorySlot targetSlot = targetObject.GetComponent<InventorySlot>();
-                    if (targetSlot != null)
-                        InventoryManager.Instance.ChangeItemSlot(this, targetSlot.Index);
-                    else
-                        transform.SetParent(parentAfterDrag);
-                }
+                InventorySlot targetSlot = targetObject?.GetComponent<InventorySlot>();
+                if (targetSlot == null)
+                    targetSlot = InventoryManager.Instance.inventorySlots[InventorySlotIndex]; //Use index to return it to original slot
+                InventoryManager.Instance.ChangeItemSlot(this, targetSlot.Index);
             }
 
             countText.raycastTarget = true;

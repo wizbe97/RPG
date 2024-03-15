@@ -119,26 +119,23 @@ public class InventoryManager : MonoBehaviour
         GameObject newItemGO = Instantiate(inventoryItemPrefab, slot.transform);
         slot.Item = newItemGO.GetComponent<InventoryItem>();
         slot.Item.InitialiseItem(item);
-        slot.Item.inventorySlotIndex = slotIndex;
+        slot.Item.InventorySlotIndex = slotIndex;
     }
 
     public void ChangeItemSlot(InventoryItem item, int slotIndex, bool emptyOriginalSlot = true)
     {
-        if (item.inventorySlotIndex == slotIndex)
-            return;
-
         InventorySlot slot = inventorySlots[slotIndex];
-        if (emptyOriginalSlot)
-            inventorySlots[item.inventorySlotIndex].Item = null;
+        if (item.InventorySlotIndex != slotIndex && emptyOriginalSlot)
+            inventorySlots[item.InventorySlotIndex].Item = null;
         slot.Item = item;
-        item.inventorySlotIndex = slotIndex;
+        item.InventorySlotIndex = slotIndex;
         item.transform.SetParent(slot.transform);
     }
 
     public void SwitchItemSlots(params InventoryItem[] items)
     {
-        int item0Slot = items[0].inventorySlotIndex;
-        int item1Slot = items[1].inventorySlotIndex;
+        int item0Slot = items[0].InventorySlotIndex;
+        int item1Slot = items[1].InventorySlotIndex;
         ChangeItemSlot(items[0], item1Slot, false);
         ChangeItemSlot(items[1], item0Slot, false);
     }
