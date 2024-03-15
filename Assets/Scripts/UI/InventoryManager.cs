@@ -4,11 +4,21 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager Instance;
+
     public int maxStackedItems = 250;
     public InventorySlot[] inventorySlots;
     public GameObject inventoryItemPrefab;
 
     int selectedSlot = -1;
+
+    private void Awake()
+    {
+        Instance = this;
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+            inventorySlots[i].Index = i;
+    }
 
     private void Start()
     {
@@ -79,14 +89,15 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < inventorySlots.Length; i++)
         {
-            InventorySlot slot = inventorySlots[i];
+            int slotIndex = i;
+            InventorySlot slot = inventorySlots[slotIndex];
             InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
 
             // Check if there is no item in the slot and no placeholder exists
             if (itemInSlot == null && slot.transform.childCount == 0)
             {
                 // Spawn a new item in the slot
-                SpawnNewItem(item, slot);
+                SpawnNewItem(item, slotIndex);
                 return true;
             }
             else if (itemInSlot != null && itemInSlot.item == item && itemInSlot.count < maxStackedItems && itemInSlot.item.stackable == true)
@@ -102,10 +113,30 @@ public class InventoryManager : MonoBehaviour
 
 
 
-    void SpawnNewItem(Item item, InventorySlot slot)
+    void SpawnNewItem(Item item, int slotIndex)
     {
+        InventorySlot slot = inventorySlots[slotIndex];
         GameObject newItemGO = Instantiate(inventoryItemPrefab, slot.transform);
-        InventoryItem inventoryItem = newItemGO.GetComponent<InventoryItem>();
-        inventoryItem.InitialiseItem(item);
+        slot.Item = newItemGO.GetComponent<InventoryItem>();
+        slot.Item.InitialiseItem(item);
+        slot.Item.InventorySlotIndex = slotIndex;
+    }
+
+    public void ChangeItemSlot(InventoryItem item, int slotIndex, bool emptyOriginalSlot = true)
+    {
+        InventorySlot slot = inventorySlots[slotIndex];
+        if (item.InventorySlotIndex != slotIndex && emptyOriginalSlot)
+            inventorySlots[item.InventorySlotIndex].Item = null;
+        slot.Item = item;
+        item.InventorySlotIndex = slotIndex;
+        item.transform.SetParent(slot.transform);
+    }
+
+    public void SwitchItemSlots(params InventoryItem[] items)
+    {
+        int item0Slot = items[0].InventorySlotIndex;
+        int item1Slot = items[1].InventorySlotIndex;
+        ChangeItemSlot(items[0], item1Slot, false);
+        ChangeItemSlot(items[1], item0Slot, false);
     }
 }
