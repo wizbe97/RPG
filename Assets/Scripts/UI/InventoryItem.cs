@@ -19,8 +19,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     bool isDragging = false; // Track if dragging is occurring
     private InventoryManager inventoryManager;
 
-
-
     private void Start()
     {
         inventoryManager = FindObjectOfType<InventoryManager>(); // Find the InventoryManager in the scene

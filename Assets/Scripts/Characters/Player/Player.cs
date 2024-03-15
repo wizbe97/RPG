@@ -50,9 +50,6 @@ public class Player : Character
             }
         }
     }
-
-
-
     public bool AdjustHitPoints(int amount)
     {
         if (hitPoints.value < maxHitPoints)
