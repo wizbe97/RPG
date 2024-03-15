@@ -103,11 +103,11 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             }
             else
             {
-                //transform.SetParent(parentAfterDrag);
-
                 InventorySlot targetSlot = targetObject.GetComponent<InventorySlot>();
                 if (targetSlot != null)
                     InventoryManager.Instance.ChangeItemSlot(this, targetSlot.Index);
+                else
+                    transform.SetParent(parentAfterDrag);
             }
 
             countText.raycastTarget = true;
