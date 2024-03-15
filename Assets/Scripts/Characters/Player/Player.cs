@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Player : Character
 {
-    public InventoryManager inventoryManager;
+    private InventoryManager inventoryManager;
 
     public HitPoints hitPoints;
 
@@ -11,6 +11,7 @@ public class Player : Character
     HealthBar healthBar;
     private void Start()
     {
+        inventoryManager = FindObjectOfType<InventoryManager>();
         ResetCharacter();
     }
 
@@ -96,7 +97,6 @@ public class Player : Character
     {
         healthBar = Instantiate(healthBarPrefab);
         healthBar.character = this;
-
         hitPoints.value = startingHitPoints;
     }
 }
