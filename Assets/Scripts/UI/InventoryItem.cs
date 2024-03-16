@@ -89,7 +89,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
             if (targetItem != null)
             {
-                if (item == targetItem.item && item.stackable)
+                if (targetItem != this && item == targetItem.item && item.stackable)
                 {
                     // Snap the dragged item onto the target item slot
                     transform.SetParent(targetItem.transform.parent);
