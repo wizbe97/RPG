@@ -129,7 +129,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             otherItem.count = totalItemsCount;
             otherItem.RefreshCount();
             Destroy(gameObject); // Destroy the dragged item
-            Debug.Log("deleted");
         }
         else
         {
