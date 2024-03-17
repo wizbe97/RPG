@@ -89,15 +89,15 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
             if (targetItem != null)
             {
-                if (targetItem != this && item == targetItem.item && item.stackable)
+                if (targetItem != this && item == targetItem.item && item.stackable && (count + targetItem.count <= inventoryManager.maxStackedItems))
                 {
                     // Snap the dragged item onto the target item slot
-                    transform.SetParent(targetItem.transform.parent);
-                    transform.position = targetItem.transform.position;
-                    transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
+                    //transform.SetParent(targetItem.transform.parent);
+                    //transform.position = targetItem.transform.position;
+                    //transform.SetAsLastSibling(); // Ensure the dragged item is rendered on top
 
                     // Merge the dragged item with the target item
-                    targetItem.MergeWith(this);
+                    this.MergeWith(targetItem);
                 }
                 else
                 {
